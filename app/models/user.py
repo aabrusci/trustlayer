@@ -14,3 +14,5 @@ class User(Base):
     is_active = Column(Boolean, default=True)
     is_verified = Column(Boolean, default=False)
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    mfa_secret = Column(String, nullable=True)
+    mfa_enabled = Column(Boolean, default=False)
