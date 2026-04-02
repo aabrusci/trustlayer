@@ -3,6 +3,7 @@ from sqlalchemy import engine_from_config, pool
 from alembic import context
 from app.db.database import Base
 from app.models.user import User
+from app.models.refresh_token import RefreshToken
 
 config = context.config
 if config.config_file_name is not None:

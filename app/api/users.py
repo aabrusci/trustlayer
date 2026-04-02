@@ -3,15 +3,20 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 from app.db.database import get_db
 from app.models.user import User
+from app.models.refresh_token import RefreshToken
 from app.schemas.user import UserCreate, UserResponse, LoginRequest, TokenResponse
-from app.core.security import create_access_token, decode_access_token
+from app.core.security import create_access_token, decode_access_token, create_refresh_token, REFRESH_TOKEN_EXPIRE_DAYS
 from app.core.config import settings
 from passlib.context import CryptContext
-from datetime import timedelta
+from datetime import timedelta, datetime, timezone
+from pydantic import BaseModel
 
 router = APIRouter(prefix="/users", tags=["users"])
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 bearer_scheme = HTTPBearer()
+
+class RefreshRequest(BaseModel):
+    refresh_token: str
 
 @router.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
 def register(user_in: UserCreate, db: Session = Depends(get_db)):
@@ -36,10 +41,56 @@ def login(credentials: LoginRequest, db: Session = Depends(get_db)):
     if not user.is_active:
         raise HTTPException(status_code=403, detail="Account disabled")
     access_token = create_access_token(subject=str(user.id))
+    refresh_token_value = create_refresh_token()
+    refresh_token = RefreshToken(
+        token=refresh_token_value,
+        user_id=user.id,
+        expires_at=datetime.now(timezone.utc) + timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS)
+    )
+    db.add(refresh_token)
+    db.commit()
     return TokenResponse(
         access_token=access_token,
+        refresh_token=refresh_token_value,
         expires_in=settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60
     )
+
+@router.post("/refresh")
+def refresh(body: RefreshRequest, db: Session = Depends(get_db)):
+    token = db.query(RefreshToken).filter(
+        RefreshToken.token == body.refresh_token,
+        RefreshToken.is_revoked == False
+    ).first()
+    if not token:
+        raise HTTPException(status_code=401, detail="Invalid refresh token")
+    if token.expires_at.replace(tzinfo=timezone.utc) < datetime.now(timezone.utc):
+        raise HTTPException(status_code=401, detail="Refresh token expired")
+    token.is_revoked = True
+    new_refresh_token_value = create_refresh_token()
+    new_refresh_token = RefreshToken(
+        token=new_refresh_token_value,
+        user_id=token.user_id,
+        expires_at=datetime.now(timezone.utc) + timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS)
+    )
+    db.add(new_refresh_token)
+    db.commit()
+    access_token = create_access_token(subject=str(token.user_id))
+    return {
+        "access_token": access_token,
+        "refresh_token": new_refresh_token_value,
+        "token_type": "bearer",
+        "expires_in": settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60
+    }
+
+@router.post("/logout")
+def logout(body: RefreshRequest, db: Session = Depends(get_db)):
+    token = db.query(RefreshToken).filter(
+        RefreshToken.token == body.refresh_token
+    ).first()
+    if token:
+        token.is_revoked = True
+        db.commit()
+    return {"message": "Logged out successfully"}
 
 @router.get("/me", response_model=UserResponse)
 def me(credentials: HTTPAuthorizationCredentials = Depends(bearer_scheme), db: Session = Depends(get_db)):
