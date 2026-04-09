@@ -5,6 +5,7 @@ from app.api.mfa import router as mfa_router
 from app.api.applications import router as applications_router
 from app.api.oidc import router as oidc_router
 from app.api.saml import router as saml_router
+from app.api.billing import router as billing_router
 
 app = FastAPI(
     title=settings.APP_NAME,
@@ -16,6 +17,7 @@ app.include_router(mfa_router)
 app.include_router(applications_router)
 app.include_router(oidc_router)
 app.include_router(saml_router)
+app.include_router(billing_router)
 
 @app.get("/")
 def root():
