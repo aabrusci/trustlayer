@@ -5,6 +5,7 @@ from app.db.database import Base
 from app.models.user import User
 from app.models.refresh_token import RefreshToken
 from app.models.application import Application
+from app.models.saml_provider import SAMLProvider
 
 config = context.config
 if config.config_file_name is not None:
