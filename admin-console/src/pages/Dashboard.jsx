@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
-import { LayoutDashboard, Boxes, CreditCard, Shield, LogOut, Plus, X, ChevronRight, Activity, Users, Zap, Globe, Check, ExternalLink } from 'lucide-react'
+import AuditLog from './AuditLog'
+import { LayoutDashboard, Boxes, CreditCard, Shield, LogOut, Plus, X, ChevronRight, Activity, Users, Zap, Globe, Check, ExternalLink, FileText } from 'lucide-react'
 
 export default function Dashboard({ user, token, onLogout, API }) {
   const [view, setView] = useState('dashboard')
@@ -35,6 +36,7 @@ export default function Dashboard({ user, token, onLogout, API }) {
     { id:'apps', icon:Boxes, label:'Applicazioni' },
     { id:'billing', icon:CreditCard, label:'Billing' },
     { id:'security', icon:Shield, label:'Sicurezza' },
+    { id:'audit', icon:FileText, label:'Audit Log' },
   ]
 
   const planFeatures = {
@@ -271,6 +273,8 @@ export default function Dashboard({ user, token, onLogout, API }) {
             ))}
           </div>
         </>}
+
+        {view==='audit' && <AuditLog token={token} API={API}/> }
 
         {view==='security' && <>
           <div style={{marginBottom:'1.75rem'}}>
