@@ -8,6 +8,7 @@ from app.api.oidc import router as oidc_router
 from app.api.saml import router as saml_router
 from app.api.billing import router as billing_router
 from app.api.audit import router as audit_router
+from app.api.user_management import router as user_mgmt_router
 
 app = FastAPI(title=settings.APP_NAME, version=settings.APP_VERSION)
 
@@ -26,6 +27,7 @@ app.include_router(oidc_router)
 app.include_router(saml_router)
 app.include_router(billing_router)
 app.include_router(audit_router)
+app.include_router(user_mgmt_router)
 
 @app.get("/")
 def root():

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import AuditLog from './AuditLog'
+import UserManagement from './UserManagement'
 import { LayoutDashboard, Boxes, CreditCard, Shield, LogOut, Plus, X, ChevronRight, Activity, Users, Zap, Globe, Check, ExternalLink, FileText } from 'lucide-react'
 
 export default function Dashboard({ user, token, onLogout, API }) {
@@ -36,6 +37,7 @@ export default function Dashboard({ user, token, onLogout, API }) {
     { id:'apps', icon:Boxes, label:'Applicazioni' },
     { id:'billing', icon:CreditCard, label:'Billing' },
     { id:'security', icon:Shield, label:'Sicurezza' },
+    { id:'users', icon:Users, label:'Utenti' },
     { id:'audit', icon:FileText, label:'Audit Log' },
   ]
 
@@ -273,6 +275,8 @@ export default function Dashboard({ user, token, onLogout, API }) {
             ))}
           </div>
         </>}
+
+        {view==='users' && <UserManagement token={token} API={API}/> }
 
         {view==='audit' && <AuditLog token={token} API={API}/> }
 
