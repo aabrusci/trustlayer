@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from app.db.database import get_db
 from app.models.user import User
 from app.models.refresh_token import RefreshToken
+from app.models.session import UserSession
 from app.schemas.user import UserCreate, UserResponse, LoginRequest, TokenResponse
 from app.core.security import create_access_token, decode_access_token, create_refresh_token, REFRESH_TOKEN_EXPIRE_DAYS
 from app.core.config import settings
@@ -52,6 +53,14 @@ def login(credentials: LoginRequest, request: Request, db: Session = Depends(get
         expires_at=datetime.now(timezone.utc) + timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS)
     )
     db.add(refresh_token)
+    session = UserSession(
+        user_id=user.id,
+        user_email=user.email,
+        ip_address=request.client.host,
+        user_agent=request.headers.get("user-agent", "")[:200],
+        expires_at=datetime.now(timezone.utc) + timedelta(days=30)
+    )
+    db.add(session)
     db.commit()
     log_event(db, action="login", user_id=user.id, user_email=user.email, ip_address=request.client.host, status="success", user_agent=request.headers.get("user-agent"))
     return TokenResponse(

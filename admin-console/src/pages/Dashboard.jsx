@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react'
 import AuditLog from './AuditLog'
 import UserManagement from './UserManagement'
-import { LayoutDashboard, Boxes, CreditCard, Shield, LogOut, Plus, X, ChevronRight, Activity, Users, Zap, Globe, Check, ExternalLink, FileText } from 'lucide-react'
+import Invitations from './Invitations'
+import Sessions from './Sessions'
+import { LayoutDashboard, Boxes, CreditCard, Shield, LogOut, Plus, X, ChevronRight, Activity, Users, Zap, Globe, Check, ExternalLink, FileText, Mail, Monitor } from 'lucide-react'
 
 export default function Dashboard({ user, token, onLogout, API }) {
   const [view, setView] = useState('dashboard')
@@ -38,6 +40,8 @@ export default function Dashboard({ user, token, onLogout, API }) {
     { id:'billing', icon:CreditCard, label:'Billing' },
     { id:'security', icon:Shield, label:'Sicurezza' },
     { id:'users', icon:Users, label:'Utenti' },
+    { id:'invitations', icon:Mail, label:'Inviti' },
+    { id:'sessions', icon:Monitor, label:'Sessioni' },
     { id:'audit', icon:FileText, label:'Audit Log' },
   ]
 
@@ -275,6 +279,10 @@ export default function Dashboard({ user, token, onLogout, API }) {
             ))}
           </div>
         </>}
+
+        {view==='invitations' && <Invitations token={token} API={API}/> }
+
+        {view==='sessions' && <Sessions token={token} API={API}/> }
 
         {view==='users' && <UserManagement token={token} API={API}/> }
 
