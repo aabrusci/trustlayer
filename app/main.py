@@ -11,6 +11,7 @@ from app.api.audit import router as audit_router
 from app.api.user_management import router as user_mgmt_router
 from app.api.sessions import router as sessions_router
 from app.api.invitations import router as invitations_router
+from app.api.webhooks import router as webhooks_router
 
 app = FastAPI(title=settings.APP_NAME, version=settings.APP_VERSION)
 
@@ -32,6 +33,7 @@ app.include_router(audit_router)
 app.include_router(user_mgmt_router)
 app.include_router(sessions_router)
 app.include_router(invitations_router)
+app.include_router(webhooks_router)
 
 @app.get("/")
 def root():

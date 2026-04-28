@@ -10,6 +10,7 @@ from app.models.subscription import Subscription
 from app.models.audit_log import AuditLog
 from app.models.invitation import Invitation
 from app.models.session import UserSession
+from app.models.webhook import Webhook, WebhookDelivery
 
 config = context.config
 if config.config_file_name is not None:
