@@ -13,6 +13,7 @@ from app.api.sessions import router as sessions_router
 from app.api.invitations import router as invitations_router
 from app.api.webhooks import router as webhooks_router
 from app.api.brand import router as brand_router
+from app.api.password_reset import router as password_reset_router
 
 app = FastAPI(title=settings.APP_NAME, version=settings.APP_VERSION)
 
@@ -36,6 +37,7 @@ app.include_router(sessions_router)
 app.include_router(invitations_router)
 app.include_router(webhooks_router)
 app.include_router(brand_router)
+app.include_router(password_reset_router)
 
 @app.get("/")
 def root():

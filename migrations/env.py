@@ -12,6 +12,7 @@ from app.models.invitation import Invitation
 from app.models.session import UserSession
 from app.models.webhook import Webhook, WebhookDelivery
 from app.models.brand_settings import BrandSettings
+from app.models.password_reset import PasswordReset
 
 config = context.config
 if config.config_file_name is not None:
