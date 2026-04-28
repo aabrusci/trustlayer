@@ -4,7 +4,8 @@ import UserManagement from './UserManagement'
 import Invitations from './Invitations'
 import Sessions from './Sessions'
 import Webhooks from './Webhooks'
-import { LayoutDashboard, Boxes, CreditCard, Shield, LogOut, Plus, X, ChevronRight, Activity, Users, Zap, Globe, Check, ExternalLink, FileText, Mail, Monitor, Webhook } from 'lucide-react'
+import Brand from './Brand'
+import { LayoutDashboard, Boxes, CreditCard, Shield, LogOut, Plus, X, ChevronRight, Activity, Users, Zap, Globe, Check, ExternalLink, FileText, Mail, Monitor, Webhook, Palette } from 'lucide-react'
 
 export default function Dashboard({ user, token, onLogout, API }) {
   const [view, setView] = useState('dashboard')
@@ -44,6 +45,7 @@ export default function Dashboard({ user, token, onLogout, API }) {
     { id:'invitations', icon:Mail, label:'Inviti' },
     { id:'sessions', icon:Monitor, label:'Sessioni' },
     { id:'webhooks', icon:Webhook, label:'Webhook' },
+    { id:'brand', icon:Palette, label:'Brand' },
     { id:'audit', icon:FileText, label:'Audit Log' },
   ]
 
@@ -281,6 +283,8 @@ export default function Dashboard({ user, token, onLogout, API }) {
             ))}
           </div>
         </>}
+
+        {view==='brand' && <Brand token={token} API={API}/> }
 
         {view==='webhooks' && <Webhooks token={token} API={API}/> }
 
